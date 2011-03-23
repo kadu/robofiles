@@ -1,0 +1,47 @@
+/*
+||
+|| @file Summer.pde
+|| @version 1.0
+|| @author Alexander Brevig
+|| @contact alexanderbrevig@gmail.com
+||
+|| @description
+|| | Display the intuitive way of using a Summer when using this Hardware Abstraction class
+|| #
+||
+|| @license
+|| | Copyright (c) 2009 Alexander Brevig. All rights reserved.
+|| | This code is subject to AlphaLicence.txt
+|| | www.alphabeta.alexanderbrevig.com/AlphaLicense.txt
+|| #
+||
+*/
+
+#include <Summer.h>
+
+#include "WProgram.h"
+void setup();
+void loop();
+Summer summer = Summer(9);
+
+void setup() {
+  //summer.setTempo(300);
+}
+
+void loop() {
+  summer.playTone(440,1); //A4
+  summer.playTone(880,2); //A5
+}
+
+int main(void)
+{
+	init();
+
+	setup();
+    
+	for (;;)
+		loop();
+        
+	return 0;
+}
+
