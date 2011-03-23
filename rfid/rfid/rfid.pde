@@ -12,6 +12,7 @@ int bytesread = 0;
 void setup()
 { 
   Serial.begin(2400);  // Hardware serial for Monitor 2400bps
+  Serial.println("Teste");
 
   pinMode(2,OUTPUT);       // Set digital pin 2 as OUTPUT to connect it to the RFID /ENABLE pin 
   digitalWrite(2, LOW);    // Activate the RFID reader 
