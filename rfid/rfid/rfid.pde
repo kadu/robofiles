@@ -5,15 +5,15 @@ int  val = 0;
 char code[10]; 
 int bytesread = 0; 
 
-#define rxPin 8
-#define txPin 9
+#define rxPin 0
+#define txPin 1
 // RFID reader SOUT pin connected to Serial RX pin at 2400bps to pin8
 
 void setup()
 { 
-  Serial.begin(2400);  // Hardware serial for Monitor 2400bps
+  Serial.begin(9600);  // Hardware serial for Monitor 2400bps
   Serial.println("Teste");
-
+\
   pinMode(2,OUTPUT);       // Set digital pin 2 as OUTPUT to connect it to the RFID /ENABLE pin 
   digitalWrite(2, LOW);    // Activate the RFID reader 
 }
