@@ -1,4 +1,13 @@
+#include <Servo.h>
 #include <SoftwareSerial.h>
+#include <Ultrasonic.h>
+Ultrasonic ultrasonic(52,53);
+
+// Servo
+Servo myservo;
+int pos = 0; // posicao do servo
+int ctrlpos = 0; // 0 sobe 1 desce
+int controle = 0;
 
 // Constantes para a pinagem Motor
 int motor_left[]    = {9,8};
@@ -51,6 +60,9 @@ void setup() {
   digitalWrite(rfidStdout, LOW);    // Activate the RFID reader 
 
   blink(buzzPin, 3, 700);
+  
+  // Servo
+  myservo.attach(42);
 }
 
 void loop() {
@@ -59,9 +71,12 @@ void loop() {
     esperaChave();
   
   turnMotorsOnLine();
-  stat = pegaValor(SensorPin);
-  
-  if (stat == HIGH) {
+  vaiservo();
+  stat = ultrasonic.Ranging(CM);
+  Serial.print("Distancia atual: ");
+  Serial.print(stat);
+  Serial.println(" cm");
+  if (stat <= 20) {
     motor_stop(); Serial.println("Para Motor");
     drive_backward(); Serial.println("Anda pra tras");
     grillo(buzzPin,5);
@@ -80,6 +95,21 @@ void loop() {
     drive_forward();
   }
   delay(100);
+}
+
+void vaiservo() {
+  if(ctrlpos) {
+    pos += 5;
+  } else {
+    pos += 5;
+  }
+  
+  if (controle = 35) {
+    ctrlpos != ctrlpos;
+    controle = 0;
+  }
+  
+  myservo.write(pos);  
 }
 
 int pegaValor(int Sensor) {
