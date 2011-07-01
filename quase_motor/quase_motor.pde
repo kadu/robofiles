@@ -3,17 +3,22 @@
 // if you need PWM, just use the PWM outputs on the Arduino
 // and instead of analogWrite, you should use the analogWrite command
 // —————————————————————————  Motors
-int motor_left[] = {3,4};
-int motor_right[] = {8, 9};
+int motor_left[] = {9,8};
+int motor_right[] = {11, 10};
+int motor1en        = 7 ;
+int motor2en        = 12;
+
 // ————————————————————————— Setup
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   // Setup motors
   int i;
   for(i = 0; i < 2; i++){
     pinMode(motor_left[i], OUTPUT);
     pinMode(motor_right[i], OUTPUT);
   }
+    digitalWrite(motor1en, HIGH); 
+  digitalWrite(motor2en, HIGH);
 }
 // ————————————————————————— Loop
 void loop() {
