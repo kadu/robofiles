@@ -7,7 +7,7 @@
  * Use this file to select the active glcd configuration file
  * Then edit the selected panel file to configure parameters for that panel.
  *
- * This wiring is identical to the wiring used in the previous ks0108 library.
+ * This wiring is identical to the wiring used in the previous ks0108 v2 library.
  * For Teensy devices the wiring selected matches the wiring documented on the Teensy website.
  *
  */
@@ -54,14 +54,8 @@
 
 /***********************************************************************************************************
  *
- * BETA TEST NOTE:
- *  - Does the autoconfig work correctly in your environment with your boards and displays?
- *  - Is the mechanism to make a custom configuration easy to use?
- *  - We want your comments and suggestions for making configuration easer, particularly for novices
- *
  * Additional "autoconfig" files can be created, there is an example for 192x64 panels in this distribution.
  * In the future there will be more for different panel types, like sed1520, ks0713, etc..
- * Not all custom configuration files that may be supplied in the release are included in the alpha distribution
  *
  ***********************************************************************************************************/
 
@@ -85,17 +79,13 @@
 
 //#include "config/Modadm12864f_Manual_Config.h" // configuration for BGMicro 128x64 display with pinout diagram
 //#include "config/Modvk5121_Manual_Config.h"    // configuration for vk5121 122x32 display with pinout diagram
+//#include "config/Modmt12232d_Manual_Config.h" // configuration for Russian mt12232 display with pinout diagram
 
 
 /*========================== Optional User Defines ==================================*/
 
 //#define GLCD_NO_SCROLLDOWN    // disable reverse scrolling (saves ~600 bytes of code)
                                 // This will allow those tight on FLASH space to save a bit of code space
-
-/*
- * BETA TEST NOTE:
- * Should the default be "atomic" even though it will be a bit slower on standard Arduino boards?
- */
 
 //#define GLCD_ATOMIC_IO        // Generate code that ensures all pin i/o operations are atomic
                                 // including any potential nibble operations.
@@ -106,5 +96,18 @@
 
 //#define GLCD_NODEFER_SCROLL    // uncomment to disable deferred newline processing
 
+//#define GLCD_NOINIT_CHECKS	// uncommont to remove initialization busy status checks
+				// this turns off the code in the low level init code that
+				// checks for a module stuck BUSY or stuck in RESET.
+				// This will save about 100 bytes of code space in normal sketches.
+				// and an additional 220 bytes in the diag sketch. This will cause
+				// diags to hang if wires are not correct vs return an error.
 
+//#define GLCD_READ_CACHE       // Turns on code that uses a frame buffer for a read cache
+				// This adds only ~52 bytes of code but...
+				// will use DISPLAY_HEIGHT/8 * DISPLAY_WIDTH bytes of RAM
+				// A typical 128x64 ks0108 will use 1k of RAM for this.
+				// performance increase is quite noticeable (double or so on FPS test)
+				// This will not work on smaller AVRs like the mega168 that only
+				// have 1k of RAM total.
 #endif

@@ -11,7 +11,7 @@
  *
  * The memory associated with each chip is tested seperately.
  * Tests are performed starting on chip #0.
- * The GLCD gos through a series of visual displays as the memory is tested.
+ * The GLCD goes through a series of visual displays as the memory is tested.
  * The chip # under test as well as the x coordinate values are displayed: 
  * if everthing is working and configured properly, chip #0 will be on the left
  * and each increasing chip # will advance to the right.
@@ -31,7 +31,9 @@
 
 
 #include <glcd.h>
+#include "glcd_Buildinfo.h"
 #include "include/glcd_io.h"
+#include "include/glcd_errno.h"
 #include "fonts/SystemFont5x7.h"       // system font
 
 /*
@@ -78,12 +80,12 @@ P(hline) =  "-------------------------------------------------------------------
  *
  */
 
-void SerialPrintP(  const prog_char * str )
+void SerialPrintP(const prog_char * str )
 {
   char c;
   const prog_char *p = str;
 
-  while (c = pgm_read_byte(p++))
+  while ((c = pgm_read_byte(p++)))
   {
     if(c == '\n')
       Serial.print('\r');
@@ -216,8 +218,9 @@ void showchipselscreen(void)
 void  loop()
 {   // run over and over again
 
-  int lcount = 1;
-  unsigned int glcdspeed, kops, kops_fract;
+int lcount = 1;
+unsigned int glcdspeed, kops, kops_fract;
+int status;
 
   while(1)
   {
@@ -239,7 +242,29 @@ void  loop()
     Serial.println(lcount);
 
     SerialPrintQ("Initializing GLCD\n");
-    GLCD.Init();   // initialise the library, non inverted writes pixels onto a clear screen
+    status = GLCD.Init();   // initialise the library, non inverted writes pixels onto a clear screen
+
+#ifndef GLCD_NOINIT_CHECKS
+    if(status) // did the initialization fail?
+    {
+	SerialPrintQ("GLCD initialization Failed: ");
+	switch(status)
+	{
+		case GLCD_EBUSY:
+			SerialPrintQ("BUSY wait Timeout");
+			break;
+		case GLCD_ERESET:
+			SerialPrintQ("RESET wait Timeout");
+			break;
+	}
+	SerialPrintQ(" (status code: ");
+	Serial.print(status);
+	Serial.println(')');
+    	goto finished;
+    }
+#endif
+
+
     GLCD.SelectFont(System5x7, BLACK);
 
 
@@ -293,6 +318,8 @@ void  loop()
       Serial.println(kops_fract);
     }
 
+finished:
+
     delay(5000);
     lcount++;
   }
@@ -343,9 +370,9 @@ uint8_t lcdmemtest(void)
     GLCD.print((int)ecol);
     delay(500);
 
-//  SerialPrintf("Horizonal Page Test Chip: %d Pixels %d-%d\n", chip, col, ecol);
+//  SerialPrintf("Horizontal Page Test Chip: %d Pixels %d-%d\n", chip, col, ecol);
 
-    SerialPrintQ("Horizonal Page Test Chip: ");
+    SerialPrintQ("Horizontal Page Test Chip: ");
     Serial.print((int)chip);
     SerialPrintQ(" Pixels ");
     Serial.print((int)col);
@@ -414,20 +441,20 @@ uint8_t
 lcdw1test(void)
 {
   uint8_t errors = 0;
-  uint8_t data;
+  uint8_t rdata;
 
   for(uint8_t pat = 1;  pat != 0; pat <<= 1)
   {
     GLCD.GotoXY(0,0);
     GLCD.WriteData(pat);
     GLCD.GotoXY(0,0);
-    data = GLCD.ReadData();
+    rdata = GLCD.ReadData();
 
-    if(data != pat)
+    if(rdata != pat)
     {
-//    eprintf(" Compare error: %x != %x\n", data, pat);
+//    eprintf(" Compare error: %x != %x\n", rdata, pat);
       SerialPrintQ(" Compare error: ");
-      Serial.print((unsigned int)data, HEX);
+      Serial.print((unsigned int)rdata, HEX);
       SerialPrintQ(" != ");
       Serial.println((unsigned int)pat, HEX);
 
@@ -451,7 +478,7 @@ uint8_t
 lcdrwseltest()
 {
   uint8_t errors = 0;
-  uint8_t data;
+  uint8_t rdata; // read data
 
 
   for(uint8_t chip = 0; chip < glcd_CHIP_COUNT; chip++)
@@ -462,14 +489,14 @@ lcdrwseltest()
   for(uint8_t chip = 0; chip < glcd_CHIP_COUNT; chip++)
   {
     GLCD.GotoXY(chip2x1(chip), chip2y1(chip));
-    data = GLCD.ReadData();
-    if(data != chip)
+    rdata = GLCD.ReadData();
+    if(rdata != chip)
     {
-//    eprintf(" Compare error: chip:%d %x != %x\n", chip, data, chip);
+//    eprintf(" Compare error: chip:%d %x != %x\n", chip, rdata, chip);
       SerialPrintQ(" Compare error: chip:");
       Serial.print((int)chip);
       Serial.print(' ');
-      Serial.print((unsigned int)data, HEX);
+      Serial.print((unsigned int)rdata, HEX);
       SerialPrintQ(" != ");
       Serial.println((unsigned int)chip, HEX);
       errors++;
@@ -484,14 +511,14 @@ lcdrwseltest()
   for(int chip = glcd_CHIP_COUNT - 1; chip >= 0; chip--)
   {
     GLCD.GotoXY(chip2x1(chip), chip2y1(chip));
-    data = GLCD.ReadData();
-    if(data != chip)
+    rdata = GLCD.ReadData();
+    if(rdata != chip)
     {
-//    eprintf(" Compare error: chip:%d  %x != %x\n", chip, data, chip);
+//    eprintf(" Compare error: chip:%d  %x != %x\n", chip, rdata, chip);
       SerialPrintQ(" Compare error: chip:");
       Serial.print((int)chip);
       Serial.print(' ');
-      Serial.print((unsigned int)data, HEX);
+      Serial.print((unsigned int)rdata, HEX);
       SerialPrintQ(" != ");
       Serial.println((unsigned int)chip, HEX);
       errors++;
@@ -695,6 +722,13 @@ int lcdvpagetest(uint8_t x1, uint8_t x2, uint8_t spage, uint8_t epage, uint8_t s
 
 void showGLCDconfig(void)
 {
+#ifdef ARDUINO
+  SerialPrintP(hline);
+  SerialPrintQ("Reported Arduino Revision: ");
+  Serial.print(ARDUINO/100);
+  Serial.print('.');
+  Serial.println(ARDUINO%100);
+#endif
   SerialPrintP(hline);
   SerialPrintQ("GLCD Lib Configuration: glcd ver: ");
   Serial.print(GLCD_VERSION);
@@ -702,9 +736,21 @@ void showGLCDconfig(void)
   Serial.print(GLCD_Device);
   SerialPrintQ(" gText ver: ");
   Serial.println(GTEXT_VERSION);
+#ifdef GLCD_GLCDLIB_DATESTR
+  SerialPrintQ("GLCD Lib build date: ");
+  SerialPrintQ(GLCD_GLCDLIB_DATESTR);
+  Serial.println();
+#endif
+#ifdef GLCD_GLCDLIB_BUILDSTR
+  SerialPrintQ("GLCD Lib build number: ");
+  SerialPrintQ(GLCD_GLCDLIB_BUILDSTR);
+  Serial.println();
+#endif
+
 /*
- * Temporary ifdef to support older config files.
+ * ifdef to support manual config files vs auto config files 
  */
+
 #ifdef glcd_ConfigName
   SerialPrintQ("Config File:");
   SerialPrintQ(glcd_ConfigName);
@@ -932,8 +978,16 @@ void showGLCDconfig(void)
    */
 
 #ifdef GLCD_NO_SCROLLDOWN
-  SerialPrintQ("NO Down Scroll");
+  SerialPrintQ("NO Down Scroll\n");
 #endif
+
+  /*
+   * show READ CACHE if enabled
+   */
+#ifdef GLCD_READ_CACHE
+  SerialPrintQ("READ CACHE enabled\n");
+#endif
+
 
 }
 

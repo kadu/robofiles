@@ -1118,6 +1118,29 @@ void gText::Puts(char *str)
 }
 
 /**
+ * output a String class string
+ *
+ * @param str String class string
+ *
+ * Outputs all the characters in the string to the text area. 
+ * See PutChar() for a full description of how characters are
+ * written to the text area.
+ *
+ * @see PutChar()
+ * @see Puts_P()
+ * @see DrawString()
+ * @see DrawString_P()
+ * @see write()
+ */
+void gText::Puts(const String &str)
+{
+	for (int i = 0; i < str.length(); i++)
+	{
+		write(str[i]);
+	}
+}
+
+/**
  * output a program memory character string
  *
  * @param str pointer to a null terminated character string stored in program memory
@@ -1147,7 +1170,7 @@ uint8_t c;
 /**
  * output a character string at x,y coordinate
  *
- * @param str pointer to a null terminated character string
+ * @param str String class string
  * @param x specifies the horizontal location
  * @param y specifies the vertical location
  *
@@ -1168,6 +1191,34 @@ uint8_t c;
  */
 
 void gText::DrawString(char *str, uint8_t x, uint8_t y)
+{
+	this->CursorToXY(x,y);
+	this->Puts(str);
+}
+
+/**
+ * output a String class string at x,y coordinate
+ *
+ * @param str pointer to a null terminated character string
+ * @param x specifies the horizontal location
+ * @param y specifies the vertical location
+ *
+ *
+ * Outputs all the characters in the string to the text area. 
+ * X & Y are zero based pixel coordinates and are relative to 
+ * the upper left corner of the text area.
+ *
+ * See PutChar() for a full description of how characters are
+ * written to the text area.
+ *
+ *
+ * @see PutChar()
+ * @see Puts()
+ * @see Puts_P()
+ * @see DrawString_P()
+ * @see write()
+ */
+void gText::DrawString(String &str, uint8_t x, uint8_t y)
 {
 	this->CursorToXY(x,y);
 	this->Puts(str);
@@ -1437,7 +1488,7 @@ void gText::SetFontColor(uint8_t color)
 }
 
 /**
- * Select a font color
+ * Set TextArea mode
  *
  * @param mode  text area mode
  *
@@ -1447,6 +1498,7 @@ void gText::SetFontColor(uint8_t color)
  *
  * @see SelectFont()
  * @see SetFontColor()
+ * @see DefineArea()
  */
 /*
  */
@@ -1541,6 +1593,30 @@ uint16_t gText::StringWidth_P(PGM_P str)
 	return width;
 }
 
+/**
+ * Returns the pixel width of a character
+ *
+		 * @param str String class string
+ *
+ * @return the width in pixels of the sum of all the characters in the
+ * the string pointed to by str. 
+ *
+ * @see CharWidth()
+ * @see StringWidth()
+ */
+
+uint16_t gText::StringWidth_P(String &str)
+{
+	uint16_t width = 0;
+
+	for (int i = 0; i < str.length(); i++)
+	{
+		width += this->CharWidth(str[i]);
+	}
+	
+	return width;
+}
+
 
 /**
  * Legacy function to print a number
@@ -1578,10 +1654,17 @@ void gText::PrintNumber(long n)
  * @see PutChar()
  */
 
+#if ARDUINO < 100
 void gText::write(uint8_t c) 
 {
 	this->PutChar(c);
 } 
+#else
+size_t gText::write(uint8_t c) 
+{
+	return(this->PutChar(c));
+} 
+#endif
 
 #ifndef USE_ARDUINO_FLASHSTR
 // functions to store and print strings in Progmem

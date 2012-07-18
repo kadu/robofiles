@@ -17,27 +17,35 @@
 
 #include <SPI.h>
 #include <Ethernet.h>
+#include <SD.h>
 
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
-byte mac[] = {  
-  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 };
-IPAddress ip(192,168,0, 99);
-
+byte mac[] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 };
+//IPAddress ip(192,168,0, 99);
+IPAddress ip(10,11,0, 91);
 // Initialize the Ethernet server library
 // with the IP address and port you want to use 
 // (port 80 is default for HTTP):
 Server server(80);
-
-const int ledPin = 13;
+File myFile;
 
 void setup()
 {
+  
+// Pegando a configuracao
+  if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
+
+  
+  
+  
   // start the Ethernet connection and the server:
-  Serial.begin(9600);
   Ethernet.begin(mac, ip);
   server.begin();
-  Serial.println("Servidor inicializado");
 }
 
 void loop()
@@ -58,19 +66,9 @@ void loop()
           client.println("HTTP/1.1 200 OK");
           client.println("Content-Type: text/html");
           client.println();
-          client.println("Vai planeta!");
-          client.print(analogRead(13));
-          client.println("<br />");
 
           // output the value of each analog input pin
-          /*
-          for (int analogChannel = 0; analogChannel < 6; analogChannel++) {
-            client.print("analog input ");
-            client.print(analogChannel);
-            client.print(" is ");
-            client.print(analogRead(analogChannel));
-            client.println("<br />");
-          } */
+          client.println("<h1>Vai planeta!</h1>");
           break;
         }
         if (c == '\n') {
@@ -87,17 +85,5 @@ void loop()
     delay(1);
     // close the connection:
     client.stop();
-  }
-}
-
-
-void LEDOnOff(byte bOnOff)
-{
-  //When 0 is passed to the subroutine: Turn the LED off.
-  //   If something else is passed, turn the LED on.
-  if (bOnOff==0) {
-    digitalWrite(ledPin,LOW);
-  } else {
-    digitalWrite(ledPin,HIGH);
   }
 }

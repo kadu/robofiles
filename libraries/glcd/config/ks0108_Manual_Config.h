@@ -36,7 +36,7 @@
 
 /*
  * Pins can be assigned using Arduino pin numbers 0-n
- * Pins can also be assigned using PIN_Pb 
+ * Pins can also be assigned using PIN_Pb
  *   where P is port A-L and b is bit 0-7
  *   Example: port D pin 3 is PIN_D3
  *
@@ -72,7 +72,7 @@
 /*
  * the following is the calculation of the number of chips - do not change
  */
-#define glcd_CHIP_COUNT ((DISPLAY_WIDTH + CHIP_WIDTH - 1)  / CHIP_WIDTH) 
+#define glcd_CHIP_COUNT (((DISPLAY_WIDTH + CHIP_WIDTH - 1)  / CHIP_WIDTH) * ((DISPLAY_HEIGHT + CHIP_HEIGHT -1) / CHIP_HEIGHT))
 
 /*********************************************************/
 /*  Chip Select Configuration                            */
@@ -108,9 +108,9 @@
  */
 #elif  glcd_CHIP_COUNT == 3 
 
-#define glcd_CHIP0  glcdCSEL1,LOW,  glcdCSEL2,HIGH    
-#define glcd_CHIP1  glcdCSEL1,HIGH, glcdCSEL2,LOW
-#define glcd_CHIP2  glcdCSEL1,LOW,  glcdCSEL2,LOW
+#define glcd_CHIP0  glcdCSEL1,LOW,  glcdCSEL2,LOW
+#define glcd_CHIP1  glcdCSEL1,LOW,  glcdCSEL2,HIGH
+#define glcd_CHIP2  glcdCSEL1,HIGH, glcdCSEL2,LOW
 
 /*
  * Four Chip panel using two select pins

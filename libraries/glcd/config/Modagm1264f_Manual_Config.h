@@ -80,9 +80,9 @@
 #define GLCD_PANEL_CONFIG_H
 
 /*
- * define name for panel configuration
+ * define name for configuration file
  */
-#define glcd_PanelConfigName "AGM1264F-Manual"
+#define glcd_ConfigName "AGM1264F-Manual"
 
 /*********************************************************/
 /*  Configuration for LCD panel specific configuration   */
@@ -97,11 +97,6 @@
 /*********************************************************/
 /*  Configuration for assigning LCD bits to Arduino Pins */
 /*********************************************************/
-
-/*
- * define name for pin configuration
- */
-#define glcd_PinConfigName "AGM1264F-Manual"
 
 /*
  * Pins can be assigned using arduino pin numbers 0-n
@@ -160,7 +155,7 @@
 #define GLCD_tWL    450    /* E lo level width (minimum E lo pulse width)        */
 
 // calculate number of chips & round up if width is not evenly divisable
-#define glcd_CHIP_COUNT ((DISPLAY_WIDTH + CHIP_WIDTH - 1)  / CHIP_WIDTH)
+#define glcd_CHIP_COUNT (((DISPLAY_WIDTH + CHIP_WIDTH - 1)  / CHIP_WIDTH) * ((DISPLAY_HEIGHT + CHIP_HEIGHT -1) / CHIP_HEIGHT))
 
 
 #include "device/ks0108_Device.h"

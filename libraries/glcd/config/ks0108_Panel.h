@@ -28,7 +28,7 @@
 /*
  * the following is the calculation of the number of chips - do not change
  */
-#define glcd_CHIP_COUNT ((DISPLAY_WIDTH + CHIP_WIDTH - 1)  / CHIP_WIDTH) 
+#define glcd_CHIP_COUNT (((DISPLAY_WIDTH + CHIP_WIDTH - 1)  / CHIP_WIDTH) * ((DISPLAY_HEIGHT + CHIP_HEIGHT -1) / CHIP_HEIGHT))
 
 /*********************************************************/
 /*  Chip Select Configuration                            */
@@ -64,9 +64,9 @@
  */
 #elif  glcd_CHIP_COUNT == 3 
 
-#define glcd_CHIP0  glcdCSEL1,LOW,  glcdCSEL2,HIGH    
-#define glcd_CHIP1  glcdCSEL1,HIGH, glcdCSEL2,LOW
-#define glcd_CHIP2  glcdCSEL1,LOW,  glcdCSEL2,LOW
+#define glcd_CHIP0  glcdCSEL1,LOW,  glcdCSEL2,LOW
+#define glcd_CHIP1  glcdCSEL1,LOW,  glcdCSEL2,HIGH
+#define glcd_CHIP2  glcdCSEL1,HIGH, glcdCSEL2,LOW
 
 /*
  * Four Chip panel using two select pins
@@ -131,10 +131,12 @@
  /*
   * The code below selects a configuration file for pin assignment based on the board selected in the IDE 
   * These configurations are compatible with wiring used in earlier versions of the library
+  * WARNING: When adding new board types it is not as simple as just editing these lines.
+  * There is also a dependency on the file glcd/include/arduino_io.h which does the arduino pin mappings
   */
  
-#if defined(__AVR_ATmega1280__)
-#include "config/ks0108_Mega.h"      // config for Mega or other 1280 board
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+#include "config/ks0108_Mega.h"      // config for mega 1280/2560 board
 #elif defined(__AVR_ATmega644P__)  || defined(__AVR_ATmega644__)           
 #include "config/ks0108_Sanguino.h"  // config for Sanguino or other ATmega644/p board
 #elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__)// Teensy

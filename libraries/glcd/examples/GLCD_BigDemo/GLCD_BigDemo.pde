@@ -97,10 +97,10 @@ void introScreen(){
   countdown(3);
   GLCD.ClearScreen();
   GLCD.SelectFont(Arial_14); // you can also make your own fonts, see playground for details   
-  GLCD.CursorToXY(10, 3);
-  GLCD.print("GLCD ver ");
+  GLCD.CursorToXY(GLCD.Width/2 -44, 3);
+  GLCD.print("GLCD version ");
   GLCD.print(GLCD_VERSION, DEC);
-  GLCD.DrawRoundRect(8,0,GLCD.Width-9,17, 5);  // rounded rectangle around text area   
+  GLCD.DrawRoundRect(8,0,GLCD.Width-19,17, 5);  // rounded rectangle around text area   
   countdown(3);  
   GLCD.ClearScreen(); 
 }
@@ -115,7 +115,7 @@ void showCharacters(char * title, Font_t font) {
   textArea.DefineArea(GLCD.CenterX + 5, 3, GLCD.Right-2, GLCD.Bottom-4, SCROLL_UP); 
   textArea.SelectFont(font, BLACK);
   textArea.CursorTo(0,0);
-  for(byte c = 32; c <=127; c++){
+  for(char c = 32; c < 127; c++){
     textArea.print(c);  
     delay(20);
   }

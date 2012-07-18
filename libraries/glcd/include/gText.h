@@ -27,6 +27,7 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 
+#include "WString.h"
 #include "include/Streaming.h" 
 #include "include/glcd_Device.h"
 
@@ -236,11 +237,17 @@ class gText : public glcd_Device
 	void SetFontColor(uint8_t color); // new method
 	int PutChar(uint8_t c);
 	void Puts(char *str);
+	void Puts(const String &str); // for Arduino String Class
 	void Puts_P(PGM_P str);
 	void DrawString(char *str, uint8_t x, uint8_t y);
+	void DrawString(String &str, uint8_t x, uint8_t y); // for Arduino String class
 	void DrawString_P(PGM_P str, uint8_t x, uint8_t y);
 
+#if ARDUINO < 100
 	void write(uint8_t c);  // character output for print base class
+#else
+	size_t write(uint8_t c);  // character output for print base class
+#endif
 
 	void CursorTo( uint8_t column, uint8_t row); // 0 based coordinates for character columns and rows
 	void CursorTo( int8_t column); // move cursor on the current row
@@ -248,6 +255,7 @@ class gText : public glcd_Device
 	uint8_t CharWidth(uint8_t c);
 	uint16_t StringWidth(const char* str);
 	uint16_t StringWidth_P(PGM_P str);
+	uint16_t StringWidth_P(String &str);
 
 	void EraseTextLine( eraseLine_t type=eraseTO_EOL); //ansi like line erase function 
 	void EraseTextLine( uint8_t row); // erase the entire text line in the given row and move cursor to left position

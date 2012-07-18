@@ -42,7 +42,12 @@
 #define GLCD_VERSION 3 // software version of this library
 
 
-typedef const uint8_t* Image_t;
+/*
+ * Note that while for now all these typedefs are the same they
+ * may not be in the future since each is used to point to a different type of data
+ */
+typedef const uint8_t* Image_t; // a glcd format bitmap (includes width & height)
+typedef const uint8_t* ImageXBM_t; // a "xbm" format bitmap (includes width & height)
 
 // the first two bytes of bitmap data are the width and height
 #define bitmapWidth(bitmap)  (*bitmap)  
@@ -56,7 +61,6 @@ typedef const uint8_t* Image_t;
 class glcd : public gText  
 {
   private:
-	void write(uint8_t c);  // character output for print base class
   public:
 	glcd();
 	
@@ -65,7 +69,7 @@ class glcd : public gText
  */
 /*@{*/
 	// Control functions
-	void Init(uint8_t invert = NON_INVERTED);
+	int Init(uint8_t invert = NON_INVERTED);
 	void SetDisplayMode(uint8_t mode); //NON_INVERTED or INVERTED,   was SetInverted(uint8_t invert);
 /*@}*/
 	
@@ -85,6 +89,11 @@ class glcd : public gText
 	void DrawCircle(uint8_t xCenter, uint8_t yCenter, uint8_t radius, uint8_t color= BLACK);	
 	void FillCircle(uint8_t xCenter, uint8_t yCenter, uint8_t radius, uint8_t color= BLACK);	
 	void DrawBitmap(Image_t bitmap, uint8_t x, uint8_t y, uint8_t color= BLACK);
+#ifdef NOTYET
+	void DrawBitmapXBM(ImageXBM_t bitmapxbm, uint8_t x, uint8_t y, uint8_t color= BLACK);
+	void DrawBitmapXBM_P(uint8_t width, uint8_t height, uint8_t *xbmbits, uint8_t x, uint8_t y, 
+		uint8_t fg_color, uint8_t bg_color);
+#endif
 
 #ifdef DOXYGEN
 	/*
