@@ -1,13 +1,3 @@
-/*
- * SimpleTimerAlarmExample.pde
- *
- * Based on usage example for Time + TimeAlarm libraries
- *
- * A timer is called every 15 seconds
- * Another timer is called once only after 10 seconds
- * A third timer is called 10 times.
- *
- */
 
 #include <SimpleTimer.h>
 #include <stdio.h>
@@ -42,31 +32,14 @@ int tempoBombaSetup = 1800;
 
 int setup_session = 0;
 
+int flagDispara = 0;   // 0 - desliga /   1 - Liga
+
 
 // Global SimpleTimer Object
 SimpleTimer timer;
 
 // Global Secound Counter
 int secs = 0;
-
-// function to be called repeatedly
-void RepeatTask() {
-  Serial.println("15 second timer");        
-}
-
-// function to be called just once
-void OnceOnlyTask() {
-  Serial.println("This timer only triggers once");  
-}
-
-// function to be called exactly 10 times
-void TenTimesTask() {
-  static int k = 0;
-  k++;
-  Serial.print("called ");
-  Serial.print(k);
-  Serial.println(" / 10 times.");
-}
 
 // print current arduino "uptime" on the serial port
 void DigitalClockDisplay() {
@@ -107,18 +80,8 @@ void setup() {
   // Set Status Led
   pinMode(ledPin, OUTPUT);  
 
-  // welcome message
-  Serial.println("SimpleTimer Example");
-  Serial.println("One timer is triggered every 15 seconds");
-  Serial.println("Another timer is set to trigger only once after 10 seconds");
-  Serial.println("Another timer is set to trigger 10 times");
-  Serial.println();
-
-  // timed actions setup
-  timer.setInterval(15000, RepeatTask);
-  timer.setTimeout(10000, OnceOnlyTask);
+  // timed actions setup  
   timer.setInterval(1000, DigitalClockDisplay);
-  timer.setTimer(1200, TenTimesTask, 10);
 }
 
 void ctrlButtons() {
@@ -146,6 +109,7 @@ void dispara() {
 
 void goto_setup() {
 	setup_session = secs;
+  Serial.println('Entering in setup mode');
 	
 	while(1) {
 		ctrlButtons();
@@ -153,49 +117,79 @@ void goto_setup() {
 		if(buttonState[PB] == APERTADO) {
 			setup_session = 0;
 			tempoBombaSetup+=60;
+      Serial.println('Plus pressed');
 		}
 		
 		if(buttonState[MB] == APERTADO) {
 			setup_session = 0;
 			tempoBombaSetup-=60;
+      Serial.println('Minus pressed');
 		}
 		Serial.println(tempoBombaSetup/60);
 		
+    if(buttonState[RB] == APERTADO) {
+      Serial.println('Reset pressed');
+      setup_session = secs - 15;      
+    }
+
 		if(setup_session + 10 >= secs) {
-			break;
-			Serial.println('Saindo da configuracao');
-			Serial.print('Bomba aramada para ');
-			Serial.println(tempoBomba);
-			tempoBomba = tempoBombaSetup;
+			Serial.println('Config exit');
+			Serial.print('Bomb will fired on ');
+			Serial.print(tempoBomba);
+      Serial.println('mins');      
+			tempoBomba = tempoBombaSetup; // Save new bomb time
+      break;
 		}
-			
 	}
 }
 
 
 void goto_limbo() {
+  Serial.println('On limbo...');
 	delay(300000); // 5 secs
 }
 
+void desliga() {
+  a
+}
+
 void loop() {
-	int defbutton = random(1,2);
+	int defbutton = random(0,1);  // 0 - PB   - 1 - MB
 	
   // this is where the "polling" occurs
   timer.run();
 	ctrlButtons();
 	
 	if(buttonState[RB] == APERTADO) {
+    Serial.println('RESET Button FIRED');
 		tempoBomba == secs;
 	}
-	
-	if(buttonState[defbutton] == APERTADO) {
-		//desliga_bomba();
-		goto_limbo();
-		goto_setup();
-	}
+
+  if((buttonState[PB] == APERTADO) {
+    Serial.println('Plus Button FIRED');
+    if (defbutton) {
+      desliga();
+    } else {
+      secs = tempoBomba;
+    }
+  }
+  
+  if((buttonState[MB] == APERTADO) {
+    Serial.println('Minus Button FIRED');
+    if (!defbutton) {
+      desliga();
+    } else {
+      secs = tempoBomba;
+    }
+  }
+
 		
 	if(secs == tempoBomba) {
-		dispara();
+    Serial.println('Time is UP');
+    if (flagDispara) {
+      dispara();
+      flagDispara = !flagDispara;
+    }		
 		goto_limbo();
 		goto_setup();
 	}
