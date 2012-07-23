@@ -1,4 +1,3 @@
-
 #include <SimpleTimer.h>
 #include <stdio.h>
 
@@ -40,14 +39,34 @@ int flagDispara = 0;   // 0 - desliga /   1 - Liga
 int flagMostraRelogio = false;
 
 
-int defbutton = random(0,2);  // 0 - PB   - 1 - MB
-
+int defbutton;
+int botao_estouro;
 
 // Global SimpleTimer Object
 SimpleTimer timer;
 
 // Global Secound Counter
 int secs = 0;
+
+void botao_de_desarmar() {
+	randomSeed(secs);
+	defbutton = random(0,1000);
+	botao_estouro = random(0,1000);
+	Serial.print("Randon = ");
+	Serial.println(defbutton);
+	Serial.println(botao_estouro);
+	if(defbutton%2 == 0) {
+		defbutton = 0;
+	} else {
+		defbutton = 1;
+	}
+	
+	Serial.print("Botao configurado pra ser o desligador: ");
+	String bot = defbutton ?  "Plus" : "Minus";
+	Serial.println(bot);
+}
+
+
 
 // print current arduino "uptime" on the serial port
 void DigitalClockDisplay() {
@@ -77,6 +96,8 @@ void printDigits(int digits) {
 
 void setup() {
   Serial.begin(9600);
+	defbutton = 239;
+	botao_estouro = 239;
   
   // Set Buttons
   for (int i = 0; i < 3; i++) 
@@ -87,9 +108,7 @@ void setup() {
 
   // timed actions setup  
   timer.setInterval(1000, DigitalClockDisplay);
-
-	Serial.print("Botao configurado pra ser o desligador: ");
-	Serial.println(defbutton);
+	botao_de_desarmar();
 
 	Serial.println("Setup OK");
 }
@@ -132,12 +151,17 @@ void debuga() {
 	Serial.print("Bomba dispara em ");
 	Serial.print(tempoBombaSetup);
 	Serial.println(" minutos");
-	sprintf(saida, " %i - %i - %i - %i - %i", buttonState[0], buttonState[1], buttonState[2], secs, tempoBomba);
+	sprintf(saida, " reset %i - plus %i - minus %i - secs %i - tmpbomba %i", buttonState[0], buttonState[1], buttonState[2], secs, tempoBomba);
   Serial.println(saida);
+	Serial.println(defbutton);
+	Serial.println(botao_estouro);
 }
 
 void goto_setup() {
 	zera();
+	
+	
+	botao_de_desarmar();
 
 	setup_session = secs;
   Serial.println("Entering in setup mode");
@@ -213,9 +237,6 @@ void tempo() {
 }
 
 void loop() {
-	
-	
-  // this is where the "polling" occurs
   timer.run();
 	ctrlButtons();
 	
@@ -227,6 +248,7 @@ void loop() {
 
   if(buttonState[PB] == APERTADO) {
     Serial.println("Plus Button FIRED");
+		debuga();
     if (defbutton) {
       desliga();
     } else {
@@ -236,6 +258,7 @@ void loop() {
   
   if(buttonState[MB] == APERTADO) {
     Serial.println("Minus Button FIRED");
+		debuga();
     if (!defbutton) {
       desliga();
     } else {
