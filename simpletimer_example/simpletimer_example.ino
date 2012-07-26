@@ -15,7 +15,9 @@
 // More SimpleTimer objects can be created and run,
 // although there is little point in doing so.
 SimpleTimer timer;
-
+int ledPin = 13;
+int state = 0;
+int para;
 // function to be called repeatedly
 void RepeatTask() {
   Serial.println("15 second timer");        
@@ -60,6 +62,23 @@ void printDigits(int digits) {
   Serial.print(digits);
 }
 
+void left_5mins() {
+	timer.enable(para);	
+}
+
+void left_1min() {
+	timer.disable(para);
+}
+
+void left_15secs() {
+	digitalWrite(ledPin,HIGH);
+	delay(300);
+	digitalWrite(ledPin,LOW);
+	
+//	digitalWrite(ledPin,state ? HIGH : LOW);
+//	state = !state;
+}
+
 void setup() {
   Serial.begin(9600);
 
@@ -71,10 +90,14 @@ void setup() {
   Serial.println();
 
   // timed actions setup
-  timer.setInterval(15000, RepeatTask);
-  timer.setTimeout(10000, OnceOnlyTask);
+  //timer.setInterval(15000, RepeatTask);
+  //timer.setTimeout(10000, OnceOnlyTask);
   timer.setInterval(1000, DigitalClockDisplay);
-  timer.setTimer(1200, TenTimesTask, 10);
+	para = timer.setInterval(3000,left_15secs);
+	timer.setTimeout(7000, left_1min);
+	timer.setTimeout(15000, left_5mins);
+//	timer.setInterval(1000,left_15secs);
+  //timer.setTimer(1200, TenTimesTask, 10);
 }
 
 void loop() {

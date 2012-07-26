@@ -1,47 +1,6 @@
 #include <SimpleTimer.h>
 #include <stdio.h>
 
-// Buttons
-#define RESET_BUTTON 22
-#define PLUS_BUTTON 23
-#define MINUS_BUTTON 24
-#define RB 0
-#define PB 1
-#define MB 2
-#define APERTADO 1
-#define NAO_APERTADO 0
-#define TEMPO_PADRAO_BOMBA 30
-#define APERTO_BOTAO_DELAY 500
-
-const int buttonPin[3] = { RESET_BUTTON, PLUS_BUTTON, MINUS_BUTTON }; 
-
-// Status Led
-const int ledPin =  13;
-
-// Helpers
-int ledState = HIGH; 
-int buttonState[3];
-int buttonStateTime[3];
-int lastButtonState[3] = {LOW, LOW, LOW};   // the previous reading from the input pin
-long lastDebounceTime[3] = {0 , 0, 0}; 
-long debounceDelay = 50;
-char saida[20];
-int reading[3];
-
-int tempoBomba = TEMPO_PADRAO_BOMBA;
-int tempoBombaSetup = TEMPO_PADRAO_BOMBA;
-
-int setup_session = 0;
-
-int flagDispara = 0;   // 0 - desliga /   1 - Liga
-
-
-int flagMostraRelogio = false;
-
-
-int defbutton;
-int botao_estouro;
-
 // Global SimpleTimer Object
 SimpleTimer timer;
 
