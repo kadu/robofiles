@@ -5,218 +5,186 @@ If You share/use this code elsewhere on the internet please mention this code so
 
 // segment | Arduino board PIN number
 
-#define G 7
-#define A 0
-#define B 1
-#define E 5
-#define D 4
-#define C 2
+
+#define A  0
+#define B  1
+#define C  2
+#define D  4
+#define E  5
+#define Fi 6
+#define G  7
 #define DP 3
 
-int F = 6;
-int VAI = LOW;
+int pins[2][8];
+int LIGADO = LOW;
+int DESLIGADO = HIGH;
 
 // functions to display digits
 
-void digit0 () {
-// for 0 needed to turn ON F A B C D E segments, so:
-
-digitalWrite(A, VAI);
-digitalWrite(B, VAI);
-digitalWrite(C, VAI);
-digitalWrite(D, VAI);
-digitalWrite(E, VAI);
-digitalWrite(F, VAI);
-digitalWrite(G, HIGH);
-
+void digit0 (int display = 0) {
+	// for 0 needed to turn ON F A B C D E segments, so:
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  DESLIGADO);
 };
 
-void digit1 () {
-
-digitalWrite(A,HIGH);
-digitalWrite(B, VAI);
-digitalWrite(C, VAI);
-digitalWrite(D, HIGH);
-digitalWrite(E, HIGH);
-digitalWrite(F, HIGH);
-digitalWrite(G, HIGH);
+void digit1 (int display = 0) {
+	digitalWrite(pins[display][A],  DESLIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  DESLIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  DESLIGADO);
 };
 
-void digit2 () {
-
-digitalWrite(A,VAI);
-digitalWrite(B, VAI);
-digitalWrite(C, HIGH);
-digitalWrite(D, VAI);
-digitalWrite(E, VAI);
-digitalWrite(F, HIGH);
-digitalWrite(G, VAI);
+void digit2 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  DESLIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
 };
 
-void digit3 () {
-
-digitalWrite(A, VAI);
-digitalWrite(B, VAI);
-digitalWrite(C, VAI);
-digitalWrite(D, VAI);
-digitalWrite(E, HIGH);
-digitalWrite(F, HIGH);
-digitalWrite(G, VAI);
+void digit3 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
 };
 
-void digit4 () {
-
-digitalWrite(A,HIGH);
-digitalWrite(B, VAI);
-digitalWrite(C, VAI);
-digitalWrite(D, HIGH);
-digitalWrite(E, HIGH);
-digitalWrite(F, VAI);
-digitalWrite(G, VAI);
+void digit4 (int display = 0) {
+	digitalWrite(pins[display][A],  DESLIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  DESLIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
 };
 
-void digit5 () {
-
-digitalWrite(A,VAI);
-digitalWrite(B, HIGH);
-digitalWrite(C, VAI);
-digitalWrite(D, VAI);
-digitalWrite(E, HIGH);
-digitalWrite(F, VAI);
-digitalWrite(G, VAI);
+void digit5 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  DESLIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
 };
 
-void digit6 () {
-
-digitalWrite(A,VAI);
-digitalWrite(B, HIGH);
-digitalWrite(C, VAI);
-digitalWrite(D, VAI);
-digitalWrite(E, VAI);
-digitalWrite(F, VAI);
-digitalWrite(G, VAI);
+void digit6 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  DESLIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
 };
 
-void digit7 () {
-
-digitalWrite(A,VAI);
-digitalWrite(B, VAI);
-digitalWrite(C, VAI);
-digitalWrite(D, HIGH);
-digitalWrite(E, HIGH);
-digitalWrite(F, HIGH);
-digitalWrite(G, HIGH);
+void digit7 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  DESLIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  DESLIGADO);
 }
 
-void digit8 () {
-
-digitalWrite(A, VAI);
-digitalWrite(B, VAI);
-digitalWrite(C, VAI);
-digitalWrite(D, VAI);
-digitalWrite(E, VAI);
-digitalWrite(F, VAI);
-digitalWrite(G, VAI);
-
+void digit8 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
 };
 
-void digit9 () {
-
-digitalWrite(A,VAI);
-digitalWrite(B, VAI);
-digitalWrite(C, VAI);
-digitalWrite(D, VAI);
-digitalWrite(E, HIGH);
-digitalWrite(F, VAI);
-digitalWrite(G, VAI);
-
+void digit9 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
 };
+
+void dot (int display = 0, int status = DESLIGADO) {
+	digitalWrite(pins[display][DP], status);
+}
 
 //function to display digit from inputed int
-
-void showdigit (int digit)
-
-{
-
-switch (digit) {
-
-case 0:
-digit0 ();
-break;
-
-case 1:
-digit1 ();
-break;
-
-case 2:
-digit2 ();
-break;
-
-case 3:
-digit3 ();
-break;
-
-case 4:
-digit4 ();
-break;
-
-case 5:
-digit5 ();
-break;
-
-case 6:
-digit6 ();
-break;
-
-case 7:
-digit7 ();
-break;
-
-case 8:
-digit8 ();
-break;
-
-case 9:
-digit9 ();
-break;
-
-default:
-
-break;
-
-};
-
+void showdigit (int dsp = 0, int digit = -1) {
+	switch (digit) {
+		case 0: digit0(dsp); break;
+		case 1: digit1(dsp); break;
+		case 2: digit2(dsp); break;
+		case 3: digit3(dsp); break;
+		case 4: digit4(dsp); break;
+		case 5: digit5(dsp); break;
+		case 6: digit6(dsp); break;
+		case 7: digit7(dsp); break;
+		case 8: digit8(dsp); break;
+		case 9: digit9(dsp); break;
+		default:
+		break;
+	};
 }
 
-void setup()
-
-{
-
-pinMode(A, OUTPUT);
-pinMode(B, OUTPUT);
-pinMode(C, OUTPUT);
-pinMode(D, OUTPUT);
-pinMode(E, OUTPUT);
-pinMode(F, OUTPUT);
-pinMode(G, OUTPUT);
-pinMode(DP, OUTPUT);
+void setup() {	
+	pins[0][G]  = 7;
+	pins[0][A]  = 0;
+	pins[0][B]  = 1;
+	pins[0][E]  = 5;
+	pins[0][D]  = 4;
+	pins[0][C]  = 2;
+	pins[0][DP] = 3;
+	pins[0][Fi]  = 6;
+	
+	pins[1][G]  = 10;
+	pins[1][A]  = 13;
+	pins[1][B]  = A0;
+	pins[1][E]  = 8;
+	pins[1][D]  = 9;
+	pins[1][C]  = 12;
+	pins[1][DP] = A1;
+	pins[1][Fi]  = 11;
+	
+	for(size_t i = 0; i < 2; i++)
+	{
+		for(size_t j = 0; j < 8; j++)
+		{
+			pinMode(pins[i][j], OUTPUT);
+		}
+	}
 
 };
-void loop ()
 
-{
+void loop () {
+	for(size_t dsp = 0; dsp < 2; dsp++) {
+		for (int i=0;i<10;i++) { //counting from 0 to 9
+			showdigit(dsp,i);
+			delay (1000); // 1000ms= 1s delay
 
-for (int i=0;i<10;i++) { //counting from 0 to 9
-
-showdigit(i);
-
-delay (1000); // 1000ms= 1s delay
-
-if (i%2) { digitalWrite(DP, HIGH); }
-
-else {digitalWrite(DP, LOW); };
-
-};
-
+			if (i%2) { 
+				dot();
+			} else {
+				dot(0,LIGADO);
+			};
+		};
+	}
 
 };
