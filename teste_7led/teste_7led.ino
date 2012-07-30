@@ -3,9 +3,7 @@
 If You share/use this code elsewhere on the internet please mention this code source.
 */
 
-// segment | Arduino board PIN number
-
-
+// segment 
 #define A  0
 #define B  1
 #define C  2
@@ -144,6 +142,21 @@ void showdigit (int dsp = 0, int digit = -1) {
 	};
 }
 
+void showdigit2(int digit) {
+	char resposta[3];
+	int a;
+	sprintf(resposta, "%i", digit);
+  if(strlen(resposta) == 1) {
+		showdigit(0,0);
+		showdigit(1,digit);	
+  } else {
+		a = digit/10;
+		showdigit(0,a);	
+		a = digit - (a * 10);
+		showdigit(1,a);
+  }
+}
+
 void setup() {	
 	pins[0][G]  = 7;
 	pins[0][A]  = 0;
@@ -170,21 +183,17 @@ void setup() {
 			pinMode(pins[i][j], OUTPUT);
 		}
 	}
-
 };
 
 void loop () {
-	for(size_t dsp = 0; dsp < 2; dsp++) {
-		for (int i=0;i<10;i++) { //counting from 0 to 9
-			showdigit(dsp,i);
-			delay (1000); // 1000ms= 1s delay
+	for (int i=0;i<100;i++) { //counting from 0 to 9
+		showdigit2(i);
+		delay (1000); // 1000ms= 1s delay
 
-			if (i%2) { 
-				dot();
-			} else {
-				dot(0,LIGADO);
-			};
+		if (i%2) { 
+			dot();
+		} else {
+			dot(0,LIGADO);
 		};
-	}
-
+	};
 };

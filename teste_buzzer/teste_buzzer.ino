@@ -1,9 +1,31 @@
-void setup(){
-  pinMode(13,OUTPUT);//define o pino 13 do arduino como saida digital
+const int buttonPin = A3;     // the number of the pushbutton pin
+const int ledPin =  A2 ;      // the number of the LED pin
+
+// variables will change:
+int buttonState = 0;         // variable for reading the pushbutton status
+
+void setup() {
+  // initialize the LED pin as an output:
+  pinMode(ledPin, OUTPUT);      
+  // initialize the pushbutton pin as an input:
+  pinMode(buttonPin, INPUT);     
+  Serial.begin(115200);
 }
 
 void loop(){
-  //play tone
-  //tone(13,2999,800);
-  delay(1000);
+  // read the state of the pushbutton value:
+  buttonState = digitalRead(buttonPin);
+
+  // check if the pushbutton is pressed.
+  // if it is, the buttonState is HIGH:
+  if (buttonState == HIGH) {     
+    // turn LED on:    
+    digitalWrite(ledPin, HIGH);  
+    Serial.println("Apertado");
+  } 
+  else {
+    // turn LED off:
+    digitalWrite(ledPin, LOW); 
+    Serial.println("Nao Apertado");
+  }
 }

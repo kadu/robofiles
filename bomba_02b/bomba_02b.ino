@@ -1,10 +1,21 @@
 #include <SimpleTimer.h>
 #include <stdio.h>
 
+// segment 
+#define A  0
+#define B  1
+#define C  2
+#define D  4
+#define E  5
+#define Fi 6
+#define G  7
+#define DP 3
+
 // Pinagens
-#define RESET_BUTTON_PIN 22
-#define PLUS_BUTTON_PIN 23
-#define MINUS_BUTTON_PIN 24
+#define RESET_BUTTON_PIN A3
+#define PLUS_BUTTON_PIN A4
+#define MINUS_BUTTON_PIN A5
+#define BUZZ_PIN A2
 
 // Auxiliar de botoes (Reset Button / Plus Button / Minus Button)
 #define RB 0
@@ -27,7 +38,6 @@
 // Variaveis
 	// Status Led
 	const int ledPin =  13;
-	const int buzzPin=  12;
 	int ledState = HIGH; 
 	
   //botoes
@@ -55,6 +65,11 @@
 	int disarm_state_time[2] = {0,0};
 	int left_timmers[4] = {0,0,0, 0};
 	
+	// Leds
+	int pins[2][8];
+	int LIGADO = LOW;
+	int DESLIGADO = HIGH;
+	
 	// Helpers
 	long debounceDelay = 50;
 	int reading[3];
@@ -78,6 +93,32 @@ void status_bomba(int tmp = 0) {
  * Funcao de  Setup
  */
 void setup() {
+	pins[0][G]  = 7;
+	pins[0][A]  = 0;
+	pins[0][B]  = 1;
+	pins[0][E]  = 5;
+	pins[0][D]  = 4;
+	pins[0][C]  = 2;
+	pins[0][DP] = 3;
+	pins[0][Fi]  = 6;
+	
+	pins[1][G]  = 10;
+	pins[1][A]  = 13;
+	pins[1][B]  = A0;
+	pins[1][E]  = 8;
+	pins[1][D]  = 9;
+	pins[1][C]  = 12;
+	pins[1][DP] = A1;
+	pins[1][Fi]  = 11;
+	
+	for(size_t i = 0; i < 2; i++)
+	{
+		for(size_t j = 0; j < 8; j++)
+		{
+			pinMode(pins[i][j], OUTPUT);
+		}
+	}
+	
 	Serial.begin(9600);
 	Serial.println("");
 	
@@ -90,7 +131,7 @@ void setup() {
 
 	// Set Status Led
 	pinMode(ledPin, OUTPUT);
-	pinMode(buzzPin, OUTPUT);  
+	pinMode(BUZZ_PIN, OUTPUT);  
 
 	// timed actions setup  
 	timer.setInterval(1000 , count_secs);
@@ -108,12 +149,6 @@ void setup() {
 	status_bomba();
 	Serial.println("On waiting wall...");
 }
-/*
-void stz() {
-	Serial.print("Secs ");
-	Serial.println(secs);
-}
-*/
 
 /**
  * Funcao responsavel por contar os segundos
@@ -121,7 +156,7 @@ void stz() {
 void count_secs() {
   secs += 1;
   int countdown_time = tempoBomba - secs;
-	
+
 	if(flagArmed) {
 		if(countdown_time < 10) {
 			if(!timer.isEnabled(left_timmers[2])) {
@@ -165,6 +200,7 @@ void StatusDislpay() {
 				countdown_time = countdown_time / 60;
 				Serial.print(countdown_time+1);
 				Serial.println(" minutos");
+				//showdigit2(countdown_time);
 			}
 			Serial.println("");
 		}
@@ -220,13 +256,13 @@ void dispara() {
 	char pontos[22];
 	Serial.println("Disparando");
 	digitalWrite(ledPin,HIGH);
-	digitalWrite(buzzPin,HIGH);
+	digitalWrite(BUZZ_PIN,HIGH);
 	delay(500); sprintf(pontos,"[..                 ]"); Serial.println(pontos);
 	delay(500); sprintf(pontos,"[....               ]"); Serial.println(pontos);
 	delay(500); sprintf(pontos,"[........           ]"); Serial.println(pontos);
 	delay(500); sprintf(pontos,"[............       ]"); Serial.println(pontos);
 	delay(500); sprintf(pontos,"[...................]"); Serial.println(pontos);
-	digitalWrite(buzzPin,LOW);
+	digitalWrite(BUZZ_PIN,LOW);
 }
 
 
@@ -261,6 +297,7 @@ void goto_setup() {
   Serial.println("Entering in setup mode");
 
 	status_bomba();
+	//showdigit2(tempoBombaSetup);
 
 	// Fica no while de configuração até algumas condições de parada ser executado
 	while(1) {
@@ -280,6 +317,7 @@ void goto_setup() {
 			setup_session = secs;
 			Serial.print("Setup : ");
 			Serial.println(tempoBombaSetup);
+			//showdigit2(tempoBombaSetup);
 		}
 
 		// Reset Button
@@ -319,13 +357,13 @@ void aguarda_entre_sessoes() {
 void music_setup(int rep) {
 	for(size_t i = 0; i < rep; ++i)
 	{
-		digitalWrite(buzzPin,HIGH);
+		digitalWrite(BUZZ_PIN,HIGH);
 		delay(100);
-		digitalWrite(buzzPin,LOW);
+		digitalWrite(BUZZ_PIN,LOW);
 		delay(100);
-		digitalWrite(buzzPin,HIGH);
+		digitalWrite(BUZZ_PIN,HIGH);
 		delay(100);
-		digitalWrite(buzzPin,LOW);
+		digitalWrite(BUZZ_PIN,LOW);
 		delay(300);
 	}
 	delay(1000);
@@ -387,23 +425,23 @@ void goto_armed() {
 void blink() {
 	Serial.println("blink");
 	digitalWrite(ledPin,HIGH);
-	digitalWrite(buzzPin,HIGH);
+	digitalWrite(BUZZ_PIN,HIGH);
 	delay(300);
 	digitalWrite(ledPin,LOW);
-	digitalWrite(buzzPin,LOW);
+	digitalWrite(BUZZ_PIN,LOW);
 }
 
 void blinkFino() {
 	Serial.println("blink");
 	digitalWrite(ledPin,HIGH);
-	digitalWrite(buzzPin,HIGH);
+	digitalWrite(BUZZ_PIN,HIGH);
 	delay(100);
 	digitalWrite(ledPin,LOW);
-	digitalWrite(buzzPin,LOW);
+	digitalWrite(BUZZ_PIN,LOW);
 }
 
 void blinkFire() {
-	digitalWrite(buzzPin,flagBuzzer ? HIGH : LOW);
+	digitalWrite(BUZZ_PIN,flagBuzzer ? HIGH : LOW);
 	flagBuzzer = !flagBuzzer;
 }
 
@@ -478,4 +516,142 @@ void loop() {
 	} else {
 		mb_state_time[iSTART] = 0;
 	}
+}
+
+void digit0 (int display = 0) {
+	// for 0 needed to turn ON F A B C D E segments, so:
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  DESLIGADO);
+};
+
+void digit1 (int display = 0) {
+	digitalWrite(pins[display][A],  DESLIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  DESLIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  DESLIGADO);
+};
+
+void digit2 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  DESLIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
+};
+
+void digit3 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
+};
+
+void digit4 (int display = 0) {
+	digitalWrite(pins[display][A],  DESLIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  DESLIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
+};
+
+void digit5 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  DESLIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
+};
+
+void digit6 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  DESLIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
+};
+
+void digit7 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  DESLIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], DESLIGADO);
+	digitalWrite(pins[display][G],  DESLIGADO);
+}
+
+void digit8 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  LIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
+};
+
+void digit9 (int display = 0) {
+	digitalWrite(pins[display][A],  LIGADO);
+	digitalWrite(pins[display][B],  LIGADO);
+	digitalWrite(pins[display][C],  LIGADO);
+	digitalWrite(pins[display][D],  LIGADO);
+	digitalWrite(pins[display][E],  DESLIGADO);
+	digitalWrite(pins[display][Fi], LIGADO);
+	digitalWrite(pins[display][G],  LIGADO);
+};
+
+void dot (int display = 0, int status = DESLIGADO) {
+	digitalWrite(pins[display][DP], status);
+}
+
+//function to display digit from inputed int
+void showdigit (int dsp = 0, int digit = -1) {
+	switch (digit) {
+		case 0: digit0(dsp); break;
+		case 1: digit1(dsp); break;
+		case 2: digit2(dsp); break;
+		case 3: digit3(dsp); break;
+		case 4: digit4(dsp); break;
+		case 5: digit5(dsp); break;
+		case 6: digit6(dsp); break;
+		case 7: digit7(dsp); break;
+		case 8: digit8(dsp); break;
+		case 9: digit9(dsp); break;
+		default:
+		break;
+	};
+}
+
+void showdigit2(int digit) {
+	char resposta[3];
+	int a;
+	sprintf(resposta, "%i", digit);
+  if(strlen(resposta) == 1) {
+		//showdigit(0,0);
+		//showdigit(1,digit);	
+  } else {
+		a = digit/10;
+		//showdigit(0,a);	
+		a = digit - (a * 10);
+		//showdigit(1,a);
+  }
 }
